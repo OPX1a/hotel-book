@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ຈອງໂຮງແຮມ — Hotel Booking System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous"/>
+  <style>
+    :root {
+      --accent1: #2aa7f2;
+      --accent2: #2db5a6;
+      --accent-orange: #f3904f;
+      --bg: #f6f8fb;
+      --card-bg: #ffffff;
+      --muted: #9aa6b2;
+      --radius: 16px;
+      --sidebar-width: 220px;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background: linear-gradient(180deg, #f8fbff 0%, var(--bg) 40%);
+      color: #1f2d3d;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+    }
+
+    /* ===== LOGIN PAGE STYLES ===== */
+    #loginPage {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #3b4371;
+      background: linear-gradient(315deg, #3b4371 0%, #f3904f 74%);
+    }
+
+    .auth-container {
+      width: 380px;
+      background: #fff;
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .auth-container h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #1f2d3d;
+      font-size: 28px;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .auth-form input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      outline: none;
+      font-size: 15px;
+      transition: border 0.3s;
+    }
+
+    .auth-form input:focus {
+      border-color: var(--accent-orange);
+    }
+
+    .auth-form button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      background: var(--accent-orange);
+      font-size: 16px;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: 600;
+    }
+
+    .auth-form button:hover {
+      background: #d97839;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(243, 144, 79, 0.4);
+    }
+
+    .auth-toggle {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .toggle-link {
+      color: var(--accent-orange);
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    .toggle-link:hover {
+      color: #d97839;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* ===== MAIN APP STYLES ===== */
+    #mainApp {
+      display: none;
+    }
+
+    #mainApp.active {
+      display: block;
+    }
+
+    .app {
+      display: flex;
+      gap: 24px;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      background: linear-gradient(180deg, #ffffff, #f9fbfd);
+      border-right: 1px solid #e6eef5;
+      padding: 24px 12px;
+      min-height: 100vh;
+      position: sticky;
+      top: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      color: white;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .brand-text {
+      font-weight: 600;
+      font-size: 16px;
+      color: #0f2430;
+    }
+
+    .menu {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .menu a {
+      text-decoration: none;
+      color: #0f2430;
+      padding: 12px;
+      border-radius: 10px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .menu a i {
+      width: 22px;
+      color: var(--accent1);
+    }
+
+    .menu a:hover {
+      background: #eef6fb;
+    }
+
+    .menu .logout-btn {
+      margin-top: 20px;
+      color: #e74c3c;
+      cursor: pointer;
+    }
+
+    .menu .logout-btn i {
+      color: #e74c3c;
+    }
+
+    .main {
+      flex: 1;
+      padding: 18px 36px 60px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hamburger {
+      background: none;
+      border: none;
+      font-size: 20px;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .search-top {
+      display: flex;
+      border: 1px solid #e6eef5;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .search-top input {
+      border: 0;
+      padding: 8px 12px;
+      min-width: 200px;
+      outline: none;
+    }
+
+    .search-top button {
+      background: var(--accent1);
+      color: white;
+      border: 0;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: #0f2430;
+    }
+
+    .avatar {
+      font-size: 32px;
+      color: var(--accent1);
+    }
+
+    .hero {
+      position: relative;
+      padding: 8px 0 40px;
+    }
+
+    .hero-img {
+      position: relative;
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(31, 45, 61, 0.06);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-title {
+      color: white;
+      font-weight: 700;
+      letter-spacing: 6px;
+      font-size: 32px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .hero-title .highlight {
+      color: #ffd54a;
+    }
+
+    .hero-title .highlight-2 {
+      color: #ff6b6b;
+    }
+
+    .search-card {
+      position: relative;
+      margin: -34px auto 0;
+      max-width: 920px;
+      background: linear-gradient(90deg, #ffffff, #f7fbff);
+      border-radius: 28px;
+      padding: 18px;
+      border: 1px solid #e6eef5;
+      box-shadow: 0 10px 30px rgba(11, 22, 40, 0.06);
+    }
+
+    #searchForm {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      padding: 4px 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .field.small {
+      flex: 0 0 150px;
+    }
+
+    .field label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .field input,
+    .field select {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #e6eef5;
+      background: #fff;
+      outline: none;
+    }
+
+    .field.action {
+      flex: 0 0 140px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+    }
+
+    .btn-search {
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      color: white;
+      border: 0;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      transition: 0.3s;
+    }
+
+    .btn-search:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(42, 167, 242, 0.4);
+    }
+
+    .cards-section {
+      margin-top: 40px;
+    }
+
+    .cards {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .card {
+      width: 320px;
+      background: var(--card-bg);
+      border-radius: 18px;
+      padding: 12px;
+      box-shadow: 0 10px 25px rgba(15, 36, 48, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(15, 36, 48, 0.12);
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 18px;
+      color: #1f2d3d;
+    }
+
+    .card p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .btn-book {
+      margin-top: auto;
+      background: transparent;
+      border: 2px solid var(--accent1);
+      padding: 10px;
+      border-radius: 10px;
+      color: var(--accent1);
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.3s;
+    }
+
+    .btn-book:hover {
+      background: var(--accent1);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(8, 18, 26, 0.6);
+      z-index: 120;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal[aria-hidden="false"] {
+      display: flex;
+    }
+
+    .modal-content {
+      width: 420px;
+      background: white;
+      padding: 25px;
+      border-radius: 16px;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(2, 10, 20, 0.4);
+    }
+
+    .modal-close {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      border: 0;
+      background: none;
+      cursor: pointer;
+      font-size: 20px;
+      color: #999;
+    }
+
+    .modal-close:hover {
+      color: #333;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .btn-confirm {
+      background: var(--accent2);
+      color: white;
+      border: 0;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .btn-confirm:hover {
+      background: #259a8c;
+      transform: translateY(-2px);
+    }
+
+    .btn-cancel {
+      background: #f0f3f6;
+      border: 0;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .btn-cancel:hover {
+      background: #e0e5ea;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        display: none;
+      }
+      .search-card {
+        margin: 12px;
+      }
+      .cards {
+        justify-content: center;
+      }
+      .card {
+        width: 92%;
+      }
+      #searchForm {
+        flex-direction: column;
+      }
+      .field, .field.small, .field.action {
+        width: 100%;
+        flex: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- LOGIN/SIGNUP PAGE -->
+  <div id="loginPage">
+    <div class="auth-container">
+      <h1 id="authTitle">ເຂົ້າສູ່ລະບົບ</h1>
+      
+      <!-- Demo Account Info -->
+      <div style="background: #fff3cd; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 13px; border-left: 4px solid #ffc107;">
+        <strong>🔑 Demo Account (Copy & Paste):</strong><br>
+        <div style="margin-top: 8px;">
+          <strong>Email:</strong><br>
+          <input type="text" value="demo@hotel.com" readonly onclick="this.select()" style="width: 100%; padding: 6px; margin: 4px 0; border: 1px solid #ccc; border-radius: 4px; background: #fff;">
+        </div>
+        <div style="margin-top: 8px;">
+          <strong>Password:</strong><br>
+          <input type="text" value="demo123" readonly onclick="this.select()" style="width: 100%; padding: 6px; margin: 4px 0; border: 1px solid #ccc; border-radius: 4px; background: #fff;">
+        </div>
+        <small style="color: #856404;">💡 Click the boxes above to copy</small>
+      </div>
+      
+      <!-- Login Form -->
+      <form id="loginForm" class="auth-form">
+        <input type="email" id="loginEmail" placeholder="ອີເມວ" required />
+        <input type="password" id="loginPassword" placeholder="ລະຫັດຜ່ານ" required />
+        <button type="submit">ເຂົ້າສູ່ລະບົບ</button>
+        <div class="auth-toggle">
+          ຍັງບໍ່ມີບັນຊີ? <span class="toggle-link" id="showSignup">ລົງທະບຽນ</span>
+        </div>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="signupForm" class="auth-form hidden">
+        <input type="text" id="signupName" placeholder="ຊື່ເຕັມ" required />
+        <input type="text" id="signupUsername" placeholder="ຊື່ຜູ້ໃຊ້" required />
+        <input type="email" id="signupEmail" placeholder="ອີເມວ" required />
+        <input type="password" id="signupPassword" placeholder="ລະຫັດຜ່ານ" required />
+        <input type="password" id="signupConfirm" placeholder="ຢືນຢັນລະຫັດຜ່ານ" required />
+        <button type="submit">ລົງທະບຽນ</button>
+        <div class="auth-toggle">
+          ມີບັນຊີແລ້ວ? <span class="toggle-link" id="showLogin">ເຂົ້າສູ່ລະບົບ</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN HOTEL BOOKING APP -->
+  <div id="mainApp">
+    <div class="app">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="logo">B</div>
+          <div class="brand-text">ຈອງໂຮງແຮມ</div>
+        </div>
+
+        <nav class="menu">
+          <a href="#"><i class="fas fa-map-marker-alt"></i> ສະຖານທີ່ໂຮງແຮມ</a>
+          <a href="#"><i class="fas fa-calendar-check"></i> ຈອງພາຍເລກຫ້ອງ</a>
+          <a href="#"><i class="fas fa-users"></i> ແຂກ/ລູກຄ້າ</a>
+          <a href="#"><i class="fas fa-wallet"></i> ເງິນສະສົມ</a>
+          <a href="#"><i class="fas fa-image"></i> ຮູບພາບ</a>
+          <a href="#"><i class="fas fa-concierge-bell"></i> ບໍລິການ</a>
+          <a href="#" class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> ອອກຈາກລະບົບ</a>
+        </nav>
+      </aside>
+
+      <!-- Main content -->
+      <main class="main">
+        <!-- Top bar -->
+        <header class="topbar">
+          <div class="top-left">
+            <button class="hamburger"><i class="fas fa-bars"></i></button>
+            <div class="search-top">
+              <input type="text" placeholder="ຄົ້ນຫາ" id="topSearch" />
+              <button id="topSearchBtn"><i class="fas fa-search"></i></button>
+            </div>
+          </div>
+          <div class="top-right">
+            <span class="lang">LAO</span>
+            <div class="user-info">
+              <span id="userName">User</span>
+              <div class="avatar"><i class="fas fa-user-circle"></i></div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Hero -->
+        <section class="hero">
+          <div class="hero-img">
+            <h1 class="hero-title">
+              <span>Your</span>
+              <span class="highlight">Book</span>
+              <span>Starts</span>
+              <span class="highlight-2">Here</span>
+            </h1>
+          </div>
+
+          <!-- Search Card -->
+          <div class="search-card">
+            <form id="searchForm">
+              <div class="field">
+                <label>Destination</label>
+                <input type="text" id="destination" placeholder="ເມືອງ, ປະເທດ" />
+              </div>
+              <div class="field small">
+                <label>Check-in</label>
+                <input type="date" id="checkin" />
+              </div>
+              <div class="field small">
+                <label>Check-out</label>
+                <input type="date" id="checkout" />
+              </div>
+              <div class="field small">
+                <label>Guests</label>
+                <select id="guests">
+                  <option value="0">ຈັກຄົນ</option>
+                  <option value="1">1 ຄົນ</option>
+                  <option value="2">2 ຄົນ</option>
+                  <option value="3">3 ຄົນ</option>
+                  <option value="4">4 ຄົນ</option>
+                  <option value="5">5 ຄົນ</option>
+                  <option value="6">6 ຄົນ</option>
+                </select>
+              </div>
+              <div class="field action">
+                <button type="submit" class="btn-search"><i class="fas fa-search"></i> Search</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- Results / Cards -->
+        <section class="cards-section">
+          <div class="cards" id="cardsContainer">
+            <article class="card" data-destination="vientiane">
+              <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400" alt="Hotel Vientiane">
+              <h3>Hotel Vientiane</h3>
+              <p>ສະຖານທີ່: Vientiane • ລາຄາເລີ່ມຕົ້ນ 100,000 LAK</p>
+              <button class="btn-book" data-name="Hotel Vientiane">Book Now</button>
+            </article>
+
+            <article class="card" data-destination="luang prabang">
+              <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400" alt="Luang Grand Hotel">
+              <h3>Luang Grand Hotel</h3>
+              <p>ສະຖານທີ່: Luang Prabang • ລາຄາເລີ່ມຕົ້ນ 180,000 LAK</p>
+              <button class="btn-book" data-name="Luang Grand Hotel">Book Now</button>
+            </article>
+
+            <article class="card" data-destination="pakse">
+              <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400" alt="Hotel Pakse">
+              <h3>Hotel Pakse</h3>
+              <p>ສະຖານທີ່: Pakse • ລາຄາເລີ່ມຕົ້ນ 90,000 LAK</p>
+              <button class="btn-book" data-name="Hotel Pakse">Book Now</button>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Booking Modal -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-content">
+      <button class="modal-close" id="closeModal"><i class="fas fa-times"></i></button>
+      <h2 id="modalTitle">Booking</h2>
+      <p id="modalBody"></p>
+      <div class="modal-actions">
+        <button id="confirmBtn" class="btn-confirm">Confirm</button>
+        <button id="cancelBtn" class="btn-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Create demo account if not exists
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    if (users.length === 0) {
+      const demoUser = {
+        name: 'Demo User',
+        username: 'demo',
+        email: 'demo@hotel.com',
+        password: 'demo123'
+      };
+      users.push(demoUser);
+      localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    // Check if user is logged in
+    let currentUser = localStorage.getItem('currentUser');
+    
+    if (currentUser) {
+      const loginPage = document.getElementById('loginPage');
+      const mainApp = document.getElementById('mainApp');
+      
+      loginPage.style.display = 'none';
+      mainApp.style.display = 'block';
+      mainApp.classList.add('active');
+      
+      document.getElementById('userName').textContent = JSON.parse(currentUser).name || 'User';
+    }
+
+    // Toggle between login and signup
+    document.getElementById('showSignup').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('signupForm').classList.remove('hidden');
+      document.getElementById('authTitle').textContent = 'ລົງທະບຽນ';
+      
+      // Hide demo credentials box when switching to signup
+      const demoBox = document.querySelector('[style*="background: #fff3cd"]');
+      if (demoBox) demoBox.style.display = 'none';
+    });
+
+    document.getElementById('showLogin').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('signupForm').classList.add('hidden');
+      document.getElementById('loginForm').classList.remove('hidden');
+      document.getElementById('authTitle').textContent = 'ເຂົ້າສູ່ລະບົບ';
+      
+      // Show demo credentials box when switching to login
+      const demoBox = document.querySelector('[style*="background: #fff3cd"]');
+      if (demoBox) demoBox.style.display = 'block';
+    });
+
+    // Login form submission
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      
+      console.log('Login attempt:', email); // Debug
+      
+      // Get all users from localStorage
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      console.log('All users:', users); // Debug
+      
+      // Find matching user
+      const user = users.find(u => u.email === email && u.password === password);
+      
+      if (user) {
+        console.log('Login successful:', user.name); // Debug
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        
+        // Hide login page and show main app
+        const loginPage = document.getElementById('loginPage');
+        const mainApp = document.getElementById('mainApp');
+        
+        loginPage.style.display = 'none';
+        mainApp.style.display = 'block';
+        mainApp.classList.add('active');
+        
+        document.getElementById('userName').textContent = user.name;
+        
+        // Clear form
+        document.getElementById('loginForm').reset();
+        
+        // Show success message
+        setTimeout(() => {
+          alert('ເຂົ້າສູ່ລະບົບສຳເລັດ! ຍິນດີຕ້ອນຮັບ ' + user.name);
+        }, 300);
+      } else {
+        console.log('Login failed'); // Debug
+        alert('ອີເມວ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!\n\nກະລຸນາກວດສອບ:\n- ອີເມວ: demo@hotel.com\n- ລະຫັດຜ່ານ: demo123');
+      }
+    });
+
+    // Signup form submission
+    document.getElementById('signupForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('signupName').value.trim();
+      const username = document.getElementById('signupUsername').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value;
+      const confirm = document.getElementById('signupConfirm').value;
+      
+      // Validation
+      if (!name || !username || !email || !password || !confirm) {
+        alert('ກະລຸນາຕື່ມຂໍ້ມູນໃຫ້ຄົບ!');
+        return;
+      }
+      
+      if (password.length < 6) {
+        alert('ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 6 ຕົວອັກສອນ!');
+        return;
+      }
+      
+      if (password !== confirm) {
+        alert('ລະຫັດຜ່ານບໍ່ກົງກັນ!');
+        return;
+      }
+      
+      // Save user to localStorage
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      
+      if (users.find(u => u.email === email)) {
+        alert('ອີເມວນີ້ຖືກໃຊ້ແລ້ວ! ກະລຸນາໃຊ້ອີເມວອື່ນ.');
+        return;
+      }
+      
+      if (users.find(u => u.username === username)) {
+        alert('ຊື່ຜູ້ໃຊ້ນີ້ຖືກໃຊ້ແລ້ວ! ກະລຸນາໃຊ້ຊື່ຜູ້ໃຊ້ອື່ນ.');
+        return;
+      }
+      
+      const newUser = { name, username, email, password };
+      users.push(newUser);
+      localStorage.setItem('users', JSON.stringify(users));
+      localStorage.setItem('currentUser', JSON.stringify(newUser));
+      
+      // Show success and redirect to main app
+      alert('ລົງທະບຽນສຳເລັດ! ຍິນດີຕ້ອນຮັບ ' + name);
+      
+      const loginPage = document.getElementById('loginPage');
+      const mainApp = document.getElementById('mainApp');
+      
+      loginPage.style.display = 'none';
+      mainApp.style.display = 'block';
+      mainApp.classList.add('active');
+      
+      document.getElementById('userName').textContent = name;
+      
+      // Reset form
+      document.getElementById('signupForm').reset();
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      if (confirm('ທ່ານຕ້ອງການອອກຈາກລະບົບບໍ?')) {
+        localStorage.removeItem('currentUser');
+        
+        const loginPage = document.getElementById('loginPage');
+        const mainApp = document.getElementById('mainApp');
+        
+        mainApp.style.display = 'none';
+        mainApp.classList.remove('active');
+        loginPage.style.display = 'flex';
+        
+        document.getElementById('loginForm').reset();
+        document.getElementById('signupForm').reset();
+        
+        alert('ອອກຈາກລະບົບສຳເລັດ!');
+      }
+    });
+
+    // Hotel search functionality
+    document.getElementById('searchForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const destination = document.getElementById('destination').value.toLowerCase();
+      const cards = document.querySelectorAll('.card');
+      
+      cards.forEach(card => {
+        const place = card.dataset.destination.toLowerCase();
+        card.style.display = place.includes(destination) || !destination ? 'flex' : 'none';
+      });
+    });
+
+    // Top search
+    document.getElementById('topSearchBtn').addEventListener('click', () => {
+      document.getElementById('destination').value = document.getElementById('topSearch').value;
+      document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+    });
+
+    // Booking modal
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    
+    document.querySelectorAll('.btn-book').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const hotelName = btn.dataset.name;
+        const checkin = document.getElementById('checkin').value;
+        const checkout = document.getElementById('checkout').value;
+        const guests = document.getElementById('guests').value;
+        
+        modalTitle.textContent = `ຈອງ: ${hotelName}`;
+        modalBody.innerHTML = `
+          <p style="margin: 10px 0;"><strong>ໂຮງແຮມ:</strong> ${hotelName}</p>
+          <p style="margin: 10px 0;"><strong>Check-in:</strong> ${checkin || 'ຍັງບໍ່ໄດ້ເລືອກ'}</p>
+          <p style="margin: 10px 0;"><strong>Check-out:</strong> ${checkout || 'ຍັງບໍ່ໄດ້ເລືອກ'}</p>
+          <p style="margin: 10px 0;"><strong>ຈຳນວນແຂກ:</strong> ${guests || '0'} ຄົນ</p>
+        `;
+        modal.setAttribute('aria-hidden', 'false');
+      });
+    });
+
+    document.getElementById('closeModal').addEventListener('click', () => {
+      modal.setAttribute('aria-hidden', 'true');
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', () => {
+      modal.setAttribute('aria-hidden', 'true');
+    });
+
+    document.getElementById('confirmBtn').addEventListener('click', () => {
+      modal.setAttribute('aria-hidden', 'true');
+      alert('ການຈອງສຳເລັດ! ຂໍຂອບໃຈທີ່ໃຊ້ບໍລິການ.');
+    });
+  </script>
+</body>
+</html>
